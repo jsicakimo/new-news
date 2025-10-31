@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue 新聞擷取器</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1>🔍 Google 新聞擷取器 (Vue.js 版)</h1>
+        <p>使用 Python Flask 後端與 Vue.js 前端</p>
+      </header>
+
+      <main>
+        <!-- 搜尋表單 -->
+        <div class="search-form">
+          <input
+            type="text"
+            v-model="keyword"
+            placeholder="輸入關鍵字，用逗號分隔 (e.g. 海科館)"
+          />
+          <select v-model="logic">
+            <option value="OR">OR (任一關鍵字)</option>
+            <option value="AND">AND (所有關鍵字)</option>
+          </select>
+          <button @click="fetchNews" :disabled="isLoading">
+            {{ isLoading ? '擷取中...' : '🚀 開始擷取' }}
+          </button>
+        </div>
+        <div class="date-picker-form">
+          <div class="date-input">
+            <label for="start-date">起始日期：</label>
+            <input type="date" id="start-date" v-model="startDate" />
+          </div>
+          <div class="date-input">
+            <label for="end-date">結束日期：</label>
+            <input type="date" id="end-date" v-model="endDate" />
+          </div>
+          <button
+            @click="fetchNews"
+            :disabled="isLoading"
+            class="mobile-search-btn"
+          >
+            {{ isLoading ? '擷取中...' : '🚀 開始擷取' }}
+          </button>
+        </div>
+
+        <!-- 狀態與結果 -->
+        <div class="results-container">
+          <div v-if="isLoading" class="loading">
+            正在從 Google News 擷取資料，請稍候...
+          </div>
+          <div v-if="error" class="error">{{ error }}</div>
+
+          <div v-if="!isLoading && news.length > 0" class="summary">
+            在 {{ startDate }} 至 {{ endDate }} 期間，共找到 {{ news.length }}
+            則新聞
+          </div>
+
+          <!-- 統計區塊 -->
+          <div
+            v-if="stats && Object.keys(stats).length > 0"
+            class="stats-container"
+          >
+            <h3>📊 新聞來源統計</h3>
+            <div class="stats-list">
+              <div
+                v-for="(count, source) in stats"
+                :key="source"
+                class="stat-item"
+              >
+                <span class="stat-source">{{ source }}</span>
+                <span class="stat-count">{{ count }}</span>
+              </div>
+            </div>
+          </div>
+          <!-- 新聞列表 -->
+          <ul v-if="news.length > 0" class="news-list">
+            <li v-for="(item, index) in news" :key="index">
+              <a :href="item.連結" target="_blank" class="title"
+                >{{ item.標題 }}</a
+              >
+              <div class="meta">
+                <span class="source">【{{ item.來源 }}】</span>
+                <span class="time">{{ item.發布時間 }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </main>
+    </div>
+
+    <!-- 引入 Vue.js 函式庫 (從 CDN) -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入你的 Vue 應用程式邏輯 -->
+    <script src="/static/main.js"></script>
+  </body>
+</html>
