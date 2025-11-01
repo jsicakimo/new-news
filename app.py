@@ -79,5 +79,7 @@ def index():
 # --- 主程式執行 ---
 
 if __name__ == "__main__":
-    print(f"啟動伺服器，請在瀏覽器打開 http://127.0.0.1:5000")
+    # 在部署到 Render 時，這段程式碼不會被執行。
+    # Render 會使用 Gunicorn (在 render.yaml 中定義) 來啟動應用。
+    # 這段程式碼僅供在本機開發時使用。
     app.run(debug=True, port=5000)
